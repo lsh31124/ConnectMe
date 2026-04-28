@@ -1,13 +1,12 @@
-package hello.sns_project;
+package hello.connectme;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SnsProjectApplication {
+public class ConnectMeApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SnsProjectApplication.class, args);
+        SpringApplication.run(ConnectMeApplication.class, args);
     }
-
 }
