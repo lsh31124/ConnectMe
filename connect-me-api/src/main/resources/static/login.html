@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Me</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #ECEEF3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 24px;
+            width: 360px;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.09);
+            overflow: hidden;
+        }
+
+        .hero {
+            height: 196px;
+            background: linear-gradient(160deg, #9DD4D4 0%, #1B4060 100%);
+        }
+
+        .content {
+            padding: 0 28px 32px;
+        }
+
+        /* 앱 아이콘 */
+        .icon-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: -30px;
+            margin-bottom: 18px;
+        }
+
+        .app-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(145deg, #6A6EF4 0%, #4F46E5 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+        }
+
+        /* 타이틀 */
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #9CA3AF;
+            margin-bottom: 28px;
+        }
+
+        /* 입력 필드 */
+        .field-label {
+            font-size: 13.5px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .input-wrap {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9CA3AF;
+            display: flex;
+        }
+
+        input {
+            width: 100%;
+            height: 52px;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 0 16px 0 44px;
+            font-size: 15px;
+            color: #374151;
+            outline: none;
+            background: #FAFAFA;
+            transition: border-color 0.15s;
+        }
+
+        input::placeholder { color: #C4CAD4; }
+
+        input:focus {
+            border-color: #4F46E5;
+            background: #fff;
+        }
+
+        /* Continue 버튼 */
+        .btn-primary {
+            width: 100%;
+            height: 52px;
+            background: #4F46E5;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 22px;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn-primary:hover { background: #4338CA; }
+        .btn-primary:active { transform: scale(0.99); }
+
+        /* 구분선 */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .divider-line { flex: 1; height: 1px; background: #E5E7EB; }
+
+        .divider-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: #9CA3AF;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+
+        /* 소셜 버튼 */
+        .social-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .btn-social {
+            height: 48px;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 12px;
+            background: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .btn-social:hover {
+            background: #F9FAFB;
+            border-color: #D1D5DB;
+        }
+
+        /* 회원가입 / 푸터 */
+        .signup-text {
+            text-align: center;
+            font-size: 13.5px;
+            color: #6B7280;
+            margin-bottom: 14px;
+        }
+
+        .signup-text a {
+            color: #4F46E5;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .signup-text a:hover { text-decoration: underline; }
+
+        .footer-text {
+            text-align: center;
+            font-size: 11px;
+            color: #B0B7C3;
+            line-height: 1.7;
+        }
+
+        .footer-text a { color: #9CA3AF; text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="card">
+
+    <div class="hero"></div>
+
+    <div class="content">
+
+        <div class="icon-wrap">
+            <div class="app-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+                    <path d="M8 10H16M8 14H13M7 4H17C18.1046 4 19 4.8954 19 6V14C19 15.1046 18.1046 16 17 16H13L9 20V16H7C5.8954 16 5 15.1046 5 14V6C5 4.8954 5.8954 4 7 4Z"
+                          stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+
+        <h1>Connect Me</h1>
+        <p class="subtitle">The world's most secure messaging app</p>
+
+        <p class="field-label">Phone Number</p>
+        <div class="input-wrap">
+            <span class="input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5"/>
+                </svg>
+            </span>
+            <input type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel">
+        </div>
+
+        <button class="btn-primary">Continue</button>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">OR CONNECT WITH</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <div class="social-buttons">
+            <button class="btn-social">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="#6B7280"/>
+                </svg>
+                Google
+            </button>
+            <button class="btn-social">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#6B7280">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                </svg>
+                Apple
+            </button>
+        </div>
+
+        <p class="signup-text">
+            New to Connect Me? <a href="#">Create an account</a>
+        </p>
+
+        <p class="footer-text">
+            By continuing, you agree to our
+            <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </p>
+
+    </div>
+</div>
+</body>
+</html>
