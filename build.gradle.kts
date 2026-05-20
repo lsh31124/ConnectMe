@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 plugins {
     java
     id("org.springframework.boot") version "4.0.5" apply false
@@ -19,6 +21,12 @@ subprojects {
 
     repositories {
         mavenCentral()
+    }
+
+    configure<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension> {
+        imports {
+            mavenBom(SpringBootPlugin.BOM_COORDINATES)
+        }
     }
 
     tasks.named<Test>("test") {

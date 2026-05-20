@@ -1,0 +1,254 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background: #F3F4F6;
+  padding: 20px 0 40px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24px;
+  width: 360px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.09);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #F3F4F6;
+  position: relative;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.backBtn:hover { background: #F3F4F6; }
+
+.headerTitle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 28px 24px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.avatarWrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: linear-gradient(145deg, #6A6EF4 0%, #4F46E5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.25);
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarEditBtn {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 26px;
+  height: 26px;
+  background: #4F46E5;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+}
+
+.profileName {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.profileEmail {
+  font-size: 13.5px;
+  color: #9CA3AF;
+  margin-bottom: 8px;
+}
+
+.profileStatus {
+  font-size: 14px;
+  color: #6B7280;
+  font-style: italic;
+}
+
+.profileStatusEmpty {
+  font-size: 13px;
+  color: #C4CAD4;
+  font-style: italic;
+}
+
+.editSection {
+  padding: 24px 28px;
+}
+
+.fieldLabel {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.inputWrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  height: 52px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 0 16px 0 44px;
+  font-size: 15px;
+  color: #374151;
+  outline: none;
+  background: #FAFAFA;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.input::placeholder { color: #C4CAD4; }
+
+.input:focus {
+  border-color: #4F46E5;
+  background: #fff;
+}
+
+.errorText {
+  font-size: 13px;
+  color: #EF4444;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.successText {
+  font-size: 13px;
+  color: #10B981;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.btnRow {
+  display: flex;
+  gap: 10px;
+}
+
+.btnPrimary {
+  flex: 1;
+  height: 52px;
+  background: #4F46E5;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  font-family: inherit;
+}
+
+.btnPrimary:hover { background: #4338CA; }
+.btnPrimary:active { transform: scale(0.99); }
+.btnPrimary:disabled { background: #A5B4FC; cursor: not-allowed; }
+
+.btnSecondary {
+  flex: 1;
+  height: 52px;
+  background: #F3F4F6;
+  color: #374151;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.btnSecondary:hover { background: #E5E7EB; }
+
+.viewSection {
+  padding: 24px 28px;
+}
+
+.viewEditBtn {
+  width: 100%;
+  height: 52px;
+  background: none;
+  border: 1.5px solid #4F46E5;
+  color: #4F46E5;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.viewEditBtn:hover {
+  background: #EEF2FF;
+}
+
+.loadingText {
+  text-align: center;
+  color: #9CA3AF;
+  font-size: 14px;
+  padding: 40px 0;
+}
