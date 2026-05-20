@@ -172,5 +172,5 @@
 - [ ] GitHub Actions CI/CD (PR → 자동 테스트, main 머지 → 자동 배포)
 - [ ] Sentry Free tier 에러 추적 연동
 - [ ] 토스 미니앱 WebView 출시 준비 (TDS 컴포넌트, 토스 SDK 연동)
-<!-- Last Claude: 2026-05-20 15:22 -->
+<!-- Last Claude: 2026-05-20 16:16 -->
 /
