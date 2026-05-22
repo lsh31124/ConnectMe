@@ -1,0 +1,135 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #F3F4F6;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px 12px;
+  background: #fff;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.headerTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.section {
+  margin-top: 12px;
+  background: #fff;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.sectionLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9CA3AF;
+  letter-spacing: 0.06em;
+  padding: 12px 20px 6px;
+  text-transform: uppercase;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  text-decoration: none;
+  color: #111827;
+  transition: background 0.12s;
+  border-top: 1px solid #F3F4F6;
+}
+
+.menuItem:first-of-type {
+  border-top: none;
+}
+
+.menuItem:hover {
+  background: #F9FAFB;
+}
+
+.menuIcon {
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.menuText {
+  flex: 1;
+  font-size: 15px;
+  color: #111827;
+}
+
+.menuArrow {
+  color: #D1D5DB;
+  display: flex;
+  align-items: center;
+}
+
+.logoutBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s;
+}
+
+.logoutBtn:hover {
+  background: #FEF2F2;
+}
+
+.logoutBtn .menuIcon {
+  color: #EF4444;
+}
+
+.logoutText {
+  font-size: 15px;
+  font-weight: 500;
+  color: #EF4444;
+}
+
+/* 하단 탭바 — ChatListPage와 동일한 구조 */
+.tabBar {
+  display: flex;
+  background: #fff;
+  border-top: 1px solid #E5E7EB;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+}
+
+.tabItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 12px;
+  gap: 4px;
+  text-decoration: none;
+  color: #9CA3AF;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: color 0.15s;
+}
+
+.tabItem:hover {
+  color: #4F46E5;
+}
+
+.tabItemActive {
+  color: #4F46E5;
+}

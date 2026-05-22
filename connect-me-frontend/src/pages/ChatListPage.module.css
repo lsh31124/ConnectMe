@@ -302,6 +302,8 @@
 
 .modal {
   width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   background: #fff;
   border-radius: 20px 20px 0 0;
   padding: 20px 0 32px;

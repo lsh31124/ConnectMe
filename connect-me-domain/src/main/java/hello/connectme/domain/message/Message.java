@@ -13,6 +13,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 채팅 메시지 엔티티
+ * 텍스트(TEXT), 이미지(IMAGE), 파일(FILE) 세 가지 유형 지원
+ * 논리 삭제(soft delete) 방식으로 메시지 삭제 처리
+ */
 @Entity
 @Table(name = "messages")
 @Getter
@@ -47,6 +52,17 @@ public class Message extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isDeleted = false;
 
+    /**
+     * 메시지 생성 팩토리 메서드
+     * @param chatRoomId 메시지를 전송할 채팅방 ID
+     * @param senderId 발신자 회원 ID
+     * @param type 메시지 유형 (TEXT/IMAGE/FILE)
+     * @param content 텍스트 내용 (TEXT 타입 시 사용)
+     * @param fileUrl 파일 URL (IMAGE/FILE 타입 시 사용)
+     * @param fileName 원본 파일명 (FILE 타입 시 사용)
+     * @param fileSize 파일 크기 (바이트 단위)
+     * @return 생성된 Message 엔티티
+     */
     public static Message create(Long chatRoomId, Long senderId, MessageType type,
                                  String content, String fileUrl, String fileName, Long fileSize) {
         Message message = new Message();
@@ -60,6 +76,9 @@ public class Message extends BaseTimeEntity {
         return message;
     }
 
+    /**
+     * 메시지 논리 삭제 처리 — isDeleted 플래그를 true로 설정
+     */
     public void softDelete() {
         this.isDeleted = true;
     }

@@ -59,9 +59,10 @@ class MessageServiceIntegrationTest {
         SendMessageRequest request = new SendMessageRequest(chatRoomId, "TEXT", "삭제할 메시지", null, null, null);
         MessageResponse created = messageService.sendMessage(senderId, request);
 
-        MessageResponse deleted = messageService.deleteMessage(created.id(), senderId);
+        messageService.deleteMessage(created.id(), senderId);
 
-        assertThat(deleted.isDeleted()).isTrue();
+        Message deletedMsg = messageRepository.findById(created.id()).orElseThrow();
+        assertThat(deletedMsg.isDeleted()).isTrue();
     }
 
     @Test

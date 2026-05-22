@@ -11,21 +11,34 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+/**
+ * 전역 예외 처리 핸들러
+ * BusinessException, 유효성 검사 실패, Spring MVC 내부 예외, 예상치 못한 예외를 통일된 응답으로 변환
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * 비즈니스 규칙 위반 예외 처리
+     * @param e BusinessException 인스턴스
+     * @return 400 Bad Request + 에러 응답
+     */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
         return ResponseEntity.badRequest()
                 .body(ApiResponse.error(e.getErrorCode().getCode(), e.getErrorCode().getMessage()));
     }
 
+    /**
+     * @Valid 유효성 검사 실패 예외 처리 — 첫 번째 필드 오류 메시지를 반환
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException e,
             HttpHeaders headers,
             HttpStatusCode status,
             WebRequest request) {
+        // 첫 번째 필드 오류 메시지 추출
         String message = e.getBindingResult().getFieldErrors().stream()
                 .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
                 .findFirst()
@@ -35,6 +48,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(ApiResponse.error("INVALID_INPUT", message));
     }
 
+    /**
+     * Spring MVC 내부 예외 처리 — HTTP 상태 코드별 표준 에러 메시지 반환
+     */
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
             Exception e,
@@ -44,6 +60,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
         int status = statusCode.value();
         ApiResponse<Void> apiResponse;
+        // HTTP 상태 코드에 따른 에러 코드 분기
         if (status == 404) {
             apiResponse = ApiResponse.error("NOT_FOUND", "요청한 리소스를 찾을 수 없습니다.");
         } else if (status == 405) {
@@ -60,6 +77,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(apiResponse);
     }
 
+    /**
+     * 예상치 못한 예외 처리 — 500 Internal Server Error 반환
+     * @param e 처리되지 않은 예외
+     * @return 500 에러 응답
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleUnexpectedException(Exception e) {
         return ResponseEntity.internalServerError()

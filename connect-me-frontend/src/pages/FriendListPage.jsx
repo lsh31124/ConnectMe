@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './FriendListPage.module.css'
-import useAuthStore from '../store/useAuthStore'
 import { getFriends, getFriendRequests, acceptFriend, rejectFriend } from '../api/friendApi'
 
 function BackIcon() {
@@ -15,31 +14,34 @@ function BackIcon() {
 
 export default function FriendListPage() {
   const navigate = useNavigate()
-  const accessToken = useAuthStore((s) => s.accessToken)
 
   const [activeTab, setActiveTab] = useState('friends')
   const [friends, setFriends] = useState([])
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState(null)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     Promise.all([
-      getFriends(accessToken),
-      getFriendRequests(accessToken),
+      getFriends(),
+      getFriendRequests(),
     ])
       .then(([friendsRes, requestsRes]) => {
         setFriends(friendsRes.data)
         setRequests(requestsRes.data)
       })
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [accessToken])
+  }, [])
 
   const handleAccept = async (friendId) => {
     setProcessingId(friendId)
     try {
-      await acceptFriend(friendId, accessToken)
+      await acceptFriend(friendId)
       setRequests((prev) => prev.filter((r) => r.id !== friendId))
+    } catch (err) {
+      setError(err.message)
     } finally {
       setProcessingId(null)
     }
@@ -48,8 +50,10 @@ export default function FriendListPage() {
   const handleReject = async (friendId) => {
     setProcessingId(friendId)
     try {
-      await rejectFriend(friendId, accessToken)
+      await rejectFriend(friendId)
       setRequests((prev) => prev.filter((r) => r.id !== friendId))
+    } catch (err) {
+      setError(err.message)
     } finally {
       setProcessingId(null)
     }
@@ -67,6 +71,8 @@ export default function FriendListPage() {
           </button>
           <span className={styles.headerTitle}>친구</span>
         </div>
+
+        {error && <p className={styles.errorMsg}>{error}</p>}
 
         <div className={styles.tabs}>
           <button
