@@ -15,6 +15,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 채팅방 멤버 엔티티
+ * 채팅방과 회원의 다대다 관계를 해소하는 연결 엔티티
+ * 역할(OWNER/MEMBER), 핀 여부, 입장/퇴장 시각 관리
+ */
 @Entity
 @Table(name = "chat_room_members")
 @Getter
@@ -44,6 +49,13 @@ public class ChatRoomMember extends BaseTimeEntity {
     @Column
     private LocalDateTime leftAt;
 
+    /**
+     * 채팅방 멤버 입장 팩토리 메서드 — 입장 시각 자동 설정
+     * @param chatRoomId 입장할 채팅방 ID
+     * @param userId 입장하는 회원 ID
+     * @param role 부여할 역할 (OWNER 또는 MEMBER)
+     * @return 생성된 ChatRoomMember 엔티티
+     */
     public static ChatRoomMember join(Long chatRoomId, Long userId, ChatRoomMemberRole role) {
         ChatRoomMember member = new ChatRoomMember();
         member.chatRoomId = chatRoomId;
@@ -54,6 +66,9 @@ public class ChatRoomMember extends BaseTimeEntity {
         return member;
     }
 
+    /**
+     * 채팅방 퇴장 처리 — leftAt에 현재 시각 기록
+     */
     public void leave() {
         this.leftAt = LocalDateTime.now();
     }

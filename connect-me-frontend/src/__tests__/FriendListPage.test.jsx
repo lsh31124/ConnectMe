@@ -92,7 +92,7 @@ describe('FriendListPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /수락/i }))
 
     await waitFor(() => {
-      expect(friendApi.acceptFriend).toHaveBeenCalledWith(3, 'test-token')
+      expect(friendApi.acceptFriend).toHaveBeenCalledWith(3)
     })
   })
 
@@ -110,7 +110,7 @@ describe('FriendListPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /거절/i }))
 
     await waitFor(() => {
-      expect(friendApi.rejectFriend).toHaveBeenCalledWith(3, 'test-token')
+      expect(friendApi.rejectFriend).toHaveBeenCalledWith(3)
     })
   })
 })

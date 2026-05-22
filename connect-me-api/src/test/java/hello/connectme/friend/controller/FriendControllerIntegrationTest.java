@@ -79,6 +79,31 @@ class FriendControllerIntegrationTest {
     }
 
     @Test
+    void sendFriendRequest_duplicate_returns400() throws Exception {
+        mockMvc.perform(post("/friends/request/" + userBId)
+                        .header("Authorization", "Bearer " + tokenA))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/friends/request/" + userBId)
+                        .header("Authorization", "Bearer " + tokenA))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("FRIEND_002"));
+    }
+
+    @Test
+    void sendFriendRequest_selfRequest_returns400() throws Exception {
+        String meResult = mockMvc.perform(get("/users/me")
+                        .header("Authorization", "Bearer " + tokenA))
+                .andReturn().getResponse().getContentAsString();
+        Long userAId = objectMapper.readTree(meResult).path("data").path("id").asLong();
+
+        mockMvc.perform(post("/friends/request/" + userAId)
+                        .header("Authorization", "Bearer " + tokenA))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("FRIEND_004"));
+    }
+
+    @Test
     void acceptFriend_success_returns200() throws Exception {
         String reqResult = mockMvc.perform(post("/friends/request/" + userBId)
                         .header("Authorization", "Bearer " + tokenA))

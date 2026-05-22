@@ -63,3 +63,32 @@ describe('authApi.logout', () => {
     }))
   })
 })
+
+import { refreshTokens } from '../api/authApi'
+
+describe('authApi.refreshTokens', () => {
+  it('POST /auth/refresh를 호출하고 새 토큰을 반환한다', async () => {
+    const mockData = {
+      code: 'SUCCESS',
+      data: { accessToken: 'new-access', refreshToken: 'new-refresh' },
+    }
+    global.fetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(mockData) })
+
+    const result = await refreshTokens('old-refresh')
+
+    expect(fetch).toHaveBeenCalledWith('/auth/refresh', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ refreshToken: 'old-refresh' }),
+    }))
+    expect(result).toEqual(mockData)
+  })
+
+  it('갱신 실패 시 에러를 던진다', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      json: () => Promise.resolve({ message: '토큰이 유효하지 않습니다.' }),
+    })
+
+    await expect(refreshTokens('invalid-token')).rejects.toThrow('토큰이 유효하지 않습니다.')
+  })
+})
