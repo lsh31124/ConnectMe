@@ -19,6 +19,8 @@ public interface ChatRoomMemberRepository extends JpaRepository<ChatRoomMember, 
      */
     Optional<ChatRoomMember> findByChatRoomIdAndUserId(Long chatRoomId, Long userId);
 
+    Optional<ChatRoomMember> findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(Long chatRoomId, Long userId);
+
     /**
      * 채팅방에 속한 전체 멤버 목록 조회
      * @param chatRoomId 채팅방 ID
@@ -32,4 +34,11 @@ public interface ChatRoomMemberRepository extends JpaRepository<ChatRoomMember, 
      * @return 퇴장하지 않은 멤버십 목록
      */
     List<ChatRoomMember> findByUserIdAndLeftAtIsNull(Long userId);
+
+    /**
+     * 여러 채팅방 ID에 속한 전체 멤버 목록 일괄 조회 (N+1 방지)
+     * @param chatRoomIds 채팅방 ID 목록
+     * @return 해당 채팅방들의 멤버 목록
+     */
+    List<ChatRoomMember> findByChatRoomIdIn(List<Long> chatRoomIds);
 }

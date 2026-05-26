@@ -24,6 +24,7 @@ public enum ErrorCode {
     CHAT_ROOM_MEMBER_NOT_FOUND("CHAT_002", "채팅방 멤버를 찾을 수 없습니다."),
     CHAT_ROOM_ALREADY_MEMBER("CHAT_003", "이미 채팅방에 참여한 사용자입니다."),
     CHAT_ROOM_NOT_OWNER("CHAT_004", "채팅방 OWNER만 수행할 수 있는 작업입니다."),
+    CHAT_ROOM_SELF_CHAT_NOT_ALLOWED("CHAT_005", "자기 자신과 채팅방을 만들 수 없습니다."),
 
     MESSAGE_NOT_FOUND("MSG_001", "메시지를 찾을 수 없습니다."),
     MESSAGE_NOT_SENDER("MSG_002", "메시지를 삭제할 권한이 없습니다.");

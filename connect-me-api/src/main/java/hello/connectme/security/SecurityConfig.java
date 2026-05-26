@@ -60,17 +60,17 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .exceptionHandling(ex -> ex
-                        // 인가 실패 (403 Forbidden) — JSON 응답 반환
+                        // 인가 실패 (403 Forbidden) — 인증됐으나 권한 없음
                         .accessDeniedHandler((request, response, e) -> {
                             response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN);
                             response.setContentType("application/json;charset=UTF-8");
                             response.getWriter().write("{\"code\":\"FORBIDDEN\",\"message\":\"접근 권한이 없습니다.\",\"data\":null}");
                         })
-                        // 인증 없음 (401) — 403으로 통일하여 JSON 응답 반환
+                        // 인증 실패 (401 Unauthorized) — 토큰 없음 또는 유효하지 않음
                         .authenticationEntryPoint((request, response, e) -> {
-                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN);
+                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json;charset=UTF-8");
-                            response.getWriter().write("{\"code\":\"FORBIDDEN\",\"message\":\"인증이 필요합니다.\",\"data\":null}");
+                            response.getWriter().write("{\"code\":\"UNAUTHORIZED\",\"message\":\"인증이 필요합니다.\",\"data\":null}");
                         })
                 )
                 .headers(headers -> headers.frameOptions(fo -> fo.sameOrigin()));

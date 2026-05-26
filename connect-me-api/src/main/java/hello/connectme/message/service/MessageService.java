@@ -29,7 +29,7 @@ public class MessageService {
 
     @Transactional
     public MessageResponse sendMessage(Long senderId, SendMessageRequest request) {
-        chatRoomMemberRepository.findByChatRoomIdAndUserId(request.roomId(), senderId)
+        chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(request.roomId(), senderId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
 
         Message message = Message.create(
@@ -46,8 +46,8 @@ public class MessageService {
     }
 
     public MessagePageResponse getMessages(Long roomId, Long userId, Long cursorId, int size) {
-        chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)
-                .filter(m -> m.getLeftAt() == null)
+        chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)
+
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
 
         PageRequest pageRequest = PageRequest.of(0, size);
@@ -80,8 +80,8 @@ public class MessageService {
 
     @Transactional
     public void pinMessage(Long roomId, Long userId, Long messageId) {
-        chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)
-                .filter(m -> m.getLeftAt() == null)
+        chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)
+
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
 
         Message message = messageRepository.findById(messageId)

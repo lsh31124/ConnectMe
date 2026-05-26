@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,7 +71,7 @@ class MessageServiceTest {
         ChatRoomMember member = createTestMember(1L, chatRoomId, senderId);
         Message saved = createTestMessage(100L, chatRoomId, senderId);
 
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(chatRoomId, senderId)).willReturn(Optional.of(member));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(chatRoomId, senderId)).willReturn(Optional.of(member));
         given(messageRepository.save(any(Message.class))).willReturn(saved);
 
         var response = messageService.sendMessage(senderId, request);
@@ -88,7 +87,7 @@ class MessageServiceTest {
         Long chatRoomId = 10L;
         SendMessageRequest request = new SendMessageRequest(chatRoomId, "TEXT", "안녕하세요", null, null, null);
 
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(chatRoomId, senderId)).willReturn(Optional.empty());
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(chatRoomId, senderId)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> messageService.sendMessage(senderId, request))
                 .isInstanceOf(BusinessException.class)
@@ -105,7 +104,7 @@ class MessageServiceTest {
         Message msg1 = createTestMessage(5L, roomId, userId);
         Message msg2 = createTestMessage(4L, roomId, userId);
 
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)).willReturn(Optional.of(member));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)).willReturn(Optional.of(member));
         given(messageRepository.findByChatRoomIdOrderByIdDesc(eq(roomId), any(PageRequest.class)))
                 .willReturn(List.of(msg1, msg2));
 
@@ -125,7 +124,7 @@ class MessageServiceTest {
         ReflectionTestUtils.setField(member, "leftAt", null);
         Message msg = createTestMessage(3L, roomId, userId);
 
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)).willReturn(Optional.of(member));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)).willReturn(Optional.of(member));
         given(messageRepository.findByChatRoomIdAndIdLessThanOrderByIdDesc(eq(roomId), eq(cursorId), any(PageRequest.class)))
                 .willReturn(List.of(msg));
 
@@ -139,10 +138,8 @@ class MessageServiceTest {
     void getMessages_leftMember_throwsBusinessException() {
         Long roomId = 10L;
         Long userId = 1L;
-        ChatRoomMember member = createTestMember(1L, roomId, userId);
-        ReflectionTestUtils.setField(member, "leftAt", LocalDateTime.now());
 
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)).willReturn(Optional.of(member));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> messageService.getMessages(roomId, userId, null, 30))
                 .isInstanceOf(BusinessException.class)
@@ -198,7 +195,7 @@ class MessageServiceTest {
         Message message = createTestMessage(messageId, roomId, userId);
         ChatRoom chatRoom = createTestChatRoom(roomId);
 
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)).willReturn(Optional.of(member));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)).willReturn(Optional.of(member));
         given(messageRepository.findById(messageId)).willReturn(Optional.of(message));
         given(chatRoomRepository.findById(roomId)).willReturn(Optional.of(chatRoom));
 
@@ -217,7 +214,7 @@ class MessageServiceTest {
         ReflectionTestUtils.setField(member, "leftAt", null);
         Message message = createTestMessage(messageId, otherRoomId, userId);
 
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)).willReturn(Optional.of(member));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)).willReturn(Optional.of(member));
         given(messageRepository.findById(messageId)).willReturn(Optional.of(message));
 
         assertThatThrownBy(() -> messageService.pinMessage(roomId, userId, messageId))
