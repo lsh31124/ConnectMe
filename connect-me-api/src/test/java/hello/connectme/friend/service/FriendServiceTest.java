@@ -165,7 +165,7 @@ class FriendServiceTest {
         Friend friend = createFriend(1L, 1L, 2L, FriendStatus.ACCEPTED);
         User partner = createUser(2L, "b@email.com", "김철수");
         given(friendRepository.findAcceptedFriends(1L)).willReturn(List.of(friend));
-        given(userRepository.findById(2L)).willReturn(Optional.of(partner));
+        given(userRepository.findAllById(List.of(2L))).willReturn(List.of(partner));
 
         List<FriendSummaryResponse> result = friendService.getFriends(1L);
 
@@ -179,7 +179,7 @@ class FriendServiceTest {
         Friend request = createFriend(3L, 4L, 1L, FriendStatus.PENDING);
         User requester = createUser(4L, "req@email.com", "박지수");
         given(friendRepository.findByReceiverIdAndStatus(1L, FriendStatus.PENDING)).willReturn(List.of(request));
-        given(userRepository.findById(4L)).willReturn(Optional.of(requester));
+        given(userRepository.findAllById(List.of(4L))).willReturn(List.of(requester));
 
         List<FriendSummaryResponse> result = friendService.getFriendRequests(1L);
 

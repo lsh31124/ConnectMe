@@ -12,12 +12,17 @@ import hello.connectme.domain.chatroom.ChatRoomMember;
 import hello.connectme.domain.chatroom.ChatRoomMemberRepository;
 import hello.connectme.domain.chatroom.ChatRoomMemberRole;
 import hello.connectme.domain.chatroom.ChatRoomRepository;
+import hello.connectme.domain.chatroom.ChatRoomType;
+import hello.connectme.domain.user.User;
 import hello.connectme.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 채팅방 비즈니스 로직 서비스
@@ -40,7 +45,9 @@ public class ChatRoomService {
      */
     @Transactional
     public ChatRoomResponse createDirectRoom(Long userId, Long targetUserId) {
-        // 상대방 회원 존재 여부 확인
+        if (userId.equals(targetUserId)) {
+            throw new BusinessException(ErrorCode.CHAT_ROOM_SELF_CHAT_NOT_ALLOWED);
+        }
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -83,14 +90,37 @@ public class ChatRoomService {
      * @return 채팅방 목록
      */
     public List<ChatRoomResponse> getMyChatRooms(Long userId) {
-        // 현재 참여 중인 멤버십 조회
         List<ChatRoomMember> memberships = chatRoomMemberRepository.findByUserIdAndLeftAtIsNull(userId);
         List<Long> roomIds = memberships.stream().map(ChatRoomMember::getChatRoomId).toList();
         List<ChatRoom> rooms = chatRoomRepository.findAllById(roomIds);
 
+        // 전체 채팅방 멤버를 한 번에 로드 (N+1 방지)
+        Map<Long, List<ChatRoomMember>> membersByRoom = chatRoomMemberRepository.findByChatRoomIdIn(roomIds)
+                .stream()
+                .collect(Collectors.groupingBy(ChatRoomMember::getChatRoomId));
+
+        // DIRECT 방의 상대방 유저를 한 번에 로드 (N+1 방지)
+        List<Long> partnerUserIds = rooms.stream()
+                .filter(r -> r.getType() == ChatRoomType.DIRECT)
+                .flatMap(r -> membersByRoom.getOrDefault(r.getId(), List.of()).stream()
+                        .filter(m -> !m.getUserId().equals(userId) && m.getLeftAt() == null)
+                        .map(ChatRoomMember::getUserId))
+                .toList();
+        Map<Long, User> userMap = userRepository.findAllById(partnerUserIds).stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+
         return rooms.stream()
                 .map(room -> {
-                    List<ChatRoomMember> members = chatRoomMemberRepository.findByChatRoomId(room.getId());
+                    List<ChatRoomMember> members = membersByRoom.getOrDefault(room.getId(), List.of());
+                    if (room.getType() == ChatRoomType.DIRECT) {
+                        Optional<User> other = members.stream()
+                                .filter(m -> !m.getUserId().equals(userId) && m.getLeftAt() == null)
+                                .findFirst()
+                                .map(m -> userMap.get(m.getUserId()));
+                        String displayName = other.map(User::getName).orElse("알 수 없음");
+                        String profileImage = other.map(User::getProfileImage).orElse(null);
+                        return ChatRoomResponse.from(room, members, displayName, profileImage);
+                    }
                     return ChatRoomResponse.from(room, members);
                 })
                 .toList();
@@ -105,14 +135,24 @@ public class ChatRoomService {
     public ChatRoomDetailResponse getChatRoomDetail(Long userId, Long roomId) {
         ChatRoom room = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND));
-        // 채팅방 참여자 본인 여부 확인
-        chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)
+        chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
 
-        List<ChatRoomMemberResponse> members = chatRoomMemberRepository.findByChatRoomId(roomId).stream()
+        List<ChatRoomMember> allMembers = chatRoomMemberRepository.findByChatRoomId(roomId);
+        List<ChatRoomMemberResponse> memberResponses = allMembers.stream()
                 .map(ChatRoomMemberResponse::from)
                 .toList();
-        return ChatRoomDetailResponse.from(room, members);
+
+        if (room.getType() == ChatRoomType.DIRECT) {
+            Optional<User> other = allMembers.stream()
+                    .filter(m -> !m.getUserId().equals(userId) && m.getLeftAt() == null)
+                    .findFirst()
+                    .flatMap(m -> userRepository.findById(m.getUserId()));
+            String displayName = other.map(User::getName).orElse("알 수 없음");
+            String profileImage = other.map(User::getProfileImage).orElse(null);
+            return ChatRoomDetailResponse.from(room, memberResponses, displayName, profileImage);
+        }
+        return ChatRoomDetailResponse.from(room, memberResponses);
     }
 
     /**
@@ -126,7 +166,7 @@ public class ChatRoomService {
     public ChatRoomResponse updateChatRoomName(Long userId, Long roomId, UpdateChatRoomRequest request) {
         ChatRoom room = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND));
-        ChatRoomMember member = chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)
+        ChatRoomMember member = chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
 
         // OWNER 권한 검사
@@ -151,13 +191,13 @@ public class ChatRoomService {
         chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND));
         // 초대 요청자가 채팅방 참여자인지 확인
-        chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)
+        chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // 이미 참여 중인 회원 초대 방지
-        chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, targetUserId)
+        chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, targetUserId)
                 .ifPresent(m -> { throw new BusinessException(ErrorCode.CHAT_ROOM_ALREADY_MEMBER); });
 
         chatRoomMemberRepository.save(ChatRoomMember.join(roomId, targetUserId, ChatRoomMemberRole.MEMBER));
@@ -172,7 +212,7 @@ public class ChatRoomService {
     public void leaveChatRoom(Long userId, Long roomId) {
         chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND));
-        ChatRoomMember member = chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)
+        ChatRoomMember member = chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
         member.leave();
     }
@@ -187,7 +227,7 @@ public class ChatRoomService {
     public void kickMember(Long userId, Long roomId, Long targetUserId) {
         chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND));
-        ChatRoomMember requester = chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, userId)
+        ChatRoomMember requester = chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
 
         // 강퇴 권한(OWNER) 검사
@@ -195,7 +235,7 @@ public class ChatRoomService {
             throw new BusinessException(ErrorCode.CHAT_ROOM_NOT_OWNER);
         }
 
-        ChatRoomMember target = chatRoomMemberRepository.findByChatRoomIdAndUserId(roomId, targetUserId)
+        ChatRoomMember target = chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(roomId, targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND));
         target.leave();
     }

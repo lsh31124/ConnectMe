@@ -128,7 +128,7 @@ class ChatRoomServiceTest {
 
         given(chatRoomMemberRepository.findByUserIdAndLeftAtIsNull(1L)).willReturn(List.of(membership));
         given(chatRoomRepository.findAllById(List.of(10L))).willReturn(List.of(room));
-        given(chatRoomMemberRepository.findByChatRoomId(10L)).willReturn(List.of(membership, member2));
+        given(chatRoomMemberRepository.findByChatRoomIdIn(List.of(10L))).willReturn(List.of(membership, member2));
 
         List<ChatRoomResponse> result = chatRoomService.getMyChatRooms(1L);
 
@@ -144,7 +144,7 @@ class ChatRoomServiceTest {
         ChatRoomMember member2 = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 1L)).willReturn(Optional.of(member1));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 1L)).willReturn(Optional.of(member1));
         given(chatRoomMemberRepository.findByChatRoomId(10L)).willReturn(List.of(member1, member2));
 
         ChatRoomDetailResponse response = chatRoomService.getChatRoomDetail(1L, 10L);
@@ -157,7 +157,7 @@ class ChatRoomServiceTest {
     void getChatRoomDetail_notMember_throwsException() {
         ChatRoom room = createTestGroupRoom(10L, "그룹방");
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 99L)).willReturn(Optional.empty());
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 99L)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> chatRoomService.getChatRoomDetail(99L, 10L))
                 .isInstanceOf(BusinessException.class)
@@ -172,7 +172,7 @@ class ChatRoomServiceTest {
         UpdateChatRoomRequest request = new UpdateChatRoomRequest("새이름");
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 1L)).willReturn(Optional.of(ownerMember));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 1L)).willReturn(Optional.of(ownerMember));
         given(chatRoomMemberRepository.findByChatRoomId(10L)).willReturn(List.of(ownerMember));
 
         ChatRoomResponse response = chatRoomService.updateChatRoomName(1L, 10L, request);
@@ -187,7 +187,7 @@ class ChatRoomServiceTest {
         UpdateChatRoomRequest request = new UpdateChatRoomRequest("새이름");
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 2L)).willReturn(Optional.of(memberRole));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 2L)).willReturn(Optional.of(memberRole));
 
         assertThatThrownBy(() -> chatRoomService.updateChatRoomName(2L, 10L, request))
                 .isInstanceOf(BusinessException.class)
@@ -202,9 +202,9 @@ class ChatRoomServiceTest {
         User targetUser = createTestUser(3L, "new@email.com");
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 1L)).willReturn(Optional.of(ownerMember));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 1L)).willReturn(Optional.of(ownerMember));
         given(userRepository.findById(3L)).willReturn(Optional.of(targetUser));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 3L)).willReturn(Optional.empty());
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 3L)).willReturn(Optional.empty());
 
         chatRoomService.inviteMember(1L, 10L, 3L);
 
@@ -219,9 +219,9 @@ class ChatRoomServiceTest {
         ChatRoomMember existingMember = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 1L)).willReturn(Optional.of(ownerMember));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 1L)).willReturn(Optional.of(ownerMember));
         given(userRepository.findById(2L)).willReturn(Optional.of(targetUser));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 2L)).willReturn(Optional.of(existingMember));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 2L)).willReturn(Optional.of(existingMember));
 
         assertThatThrownBy(() -> chatRoomService.inviteMember(1L, 10L, 2L))
                 .isInstanceOf(BusinessException.class)
@@ -235,7 +235,7 @@ class ChatRoomServiceTest {
         ChatRoomMember member = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 2L)).willReturn(Optional.of(member));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 2L)).willReturn(Optional.of(member));
 
         chatRoomService.leaveChatRoom(2L, 10L);
 
@@ -249,8 +249,8 @@ class ChatRoomServiceTest {
         ChatRoomMember targetMember = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 1L)).willReturn(Optional.of(ownerMember));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 2L)).willReturn(Optional.of(targetMember));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 1L)).willReturn(Optional.of(ownerMember));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 2L)).willReturn(Optional.of(targetMember));
 
         chatRoomService.kickMember(1L, 10L, 2L);
 
@@ -263,7 +263,7 @@ class ChatRoomServiceTest {
         ChatRoomMember memberRole = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
 
         given(chatRoomRepository.findById(10L)).willReturn(Optional.of(room));
-        given(chatRoomMemberRepository.findByChatRoomIdAndUserId(10L, 2L)).willReturn(Optional.of(memberRole));
+        given(chatRoomMemberRepository.findFirstByChatRoomIdAndUserIdAndLeftAtIsNull(10L, 2L)).willReturn(Optional.of(memberRole));
 
         assertThatThrownBy(() -> chatRoomService.kickMember(2L, 10L, 3L))
                 .isInstanceOf(BusinessException.class)

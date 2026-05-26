@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 친구 비즈니스 로직 서비스
@@ -33,14 +35,19 @@ public class FriendService {
      * @return 친구 요약 정보 목록
      */
     public List<FriendSummaryResponse> getFriends(Long userId) {
-        return friendRepository.findAcceptedFriends(userId).stream()
+        List<Friend> friends = friendRepository.findAcceptedFriends(userId);
+        List<Long> partnerIds = friends.stream()
+                .map(f -> f.getRequesterId().equals(userId) ? f.getReceiverId() : f.getRequesterId())
+                .toList();
+        Map<Long, User> userMap = userRepository.findAllById(partnerIds).stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+        return friends.stream()
                 .map(friend -> {
-                    // 현재 사용자 기준 상대방 ID 결정 (요청자이면 수신자, 수신자이면 요청자)
                     Long partnerId = friend.getRequesterId().equals(userId)
                             ? friend.getReceiverId()
                             : friend.getRequesterId();
-                    User partner = userRepository.findById(partnerId)
-                            .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+                    User partner = userMap.get(partnerId);
+                    if (partner == null) throw new BusinessException(ErrorCode.USER_NOT_FOUND);
                     return FriendSummaryResponse.from(friend, partner);
                 })
                 .toList();
@@ -52,10 +59,14 @@ public class FriendService {
      * @return 친구 요청 목록
      */
     public List<FriendSummaryResponse> getFriendRequests(Long userId) {
-        return friendRepository.findByReceiverIdAndStatus(userId, FriendStatus.PENDING).stream()
+        List<Friend> requests = friendRepository.findByReceiverIdAndStatus(userId, FriendStatus.PENDING);
+        List<Long> requesterIds = requests.stream().map(Friend::getRequesterId).toList();
+        Map<Long, User> userMap = userRepository.findAllById(requesterIds).stream()
+                .collect(Collectors.toMap(User::getId, u -> u));
+        return requests.stream()
                 .map(friend -> {
-                    User requester = userRepository.findById(friend.getRequesterId())
-                            .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+                    User requester = userMap.get(friend.getRequesterId());
+                    if (requester == null) throw new BusinessException(ErrorCode.USER_NOT_FOUND);
                     return FriendSummaryResponse.from(friend, requester);
                 })
                 .toList();
