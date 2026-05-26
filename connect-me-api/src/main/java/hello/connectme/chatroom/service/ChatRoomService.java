@@ -51,6 +51,13 @@ public class ChatRoomService {
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        // 이미 존재하는 1:1 채팅방이 있으면 기존 방 반환 (중복 생성 방지)
+        Optional<ChatRoom> existing = chatRoomRepository.findExistingDirectRoom(userId, targetUserId);
+        if (existing.isPresent()) {
+            List<ChatRoomMember> members = chatRoomMemberRepository.findByChatRoomId(existing.get().getId());
+            return ChatRoomResponse.from(existing.get(), members);
+        }
+
         ChatRoom room = chatRoomRepository.save(ChatRoom.createDirect(userId));
         chatRoomMemberRepository.save(ChatRoomMember.join(room.getId(), userId, ChatRoomMemberRole.OWNER));
         chatRoomMemberRepository.save(ChatRoomMember.join(room.getId(), targetUserId, ChatRoomMemberRole.MEMBER));
