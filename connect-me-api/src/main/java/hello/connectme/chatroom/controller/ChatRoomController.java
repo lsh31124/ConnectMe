@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class ChatRoomController {
     @PostMapping("/group")
     public ResponseEntity<ApiResponse<ChatRoomResponse>> createGroupRoom(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody CreateGroupRoomRequest request) {
+            @RequestBody @Valid CreateGroupRoomRequest request) {
         Long userId = Long.parseLong(userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok(chatRoomService.createGroupRoom(userId, request)));
@@ -110,7 +111,7 @@ public class ChatRoomController {
     public ResponseEntity<ApiResponse<ChatRoomResponse>> updateChatRoomName(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long roomId,
-            @RequestBody UpdateChatRoomRequest request) {
+            @RequestBody @Valid UpdateChatRoomRequest request) {
         Long userId = Long.parseLong(userDetails.getUsername());
         return ResponseEntity.ok(ApiResponse.ok(chatRoomService.updateChatRoomName(userId, roomId, request)));
     }

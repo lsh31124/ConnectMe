@@ -76,13 +76,13 @@ class ChatRoomControllerIntegrationTest {
     }
 
     @Test
-    void createDirectRoom_withoutToken_returnsForbidden() throws Exception {
+    void createDirectRoom_withoutToken_returnsUnauthorized() throws Exception {
         Map<String, Long> body = Map.of("targetUserId", 2L);
 
         mockMvc.perform(post("/chat-rooms/direct")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -115,9 +115,9 @@ class ChatRoomControllerIntegrationTest {
     }
 
     @Test
-    void getMyChatRooms_withoutToken_returnsForbidden() throws Exception {
+    void getMyChatRooms_withoutToken_returnsUnauthorized() throws Exception {
         mockMvc.perform(get("/chat-rooms"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

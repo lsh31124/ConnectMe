@@ -89,9 +89,9 @@ class MessageControllerIntegrationTest {
     }
 
     @Test
-    void getMessages_withoutToken_returnsForbidden() throws Exception {
+    void getMessages_withoutToken_returnsUnauthorized() throws Exception {
         mockMvc.perform(get("/chat-rooms/" + chatRoomId + "/messages"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -129,9 +129,9 @@ class MessageControllerIntegrationTest {
     }
 
     @Test
-    void deleteMessage_withoutToken_returnsForbidden() throws Exception {
+    void deleteMessage_withoutToken_returnsUnauthorized() throws Exception {
         mockMvc.perform(delete("/messages/1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -151,12 +151,12 @@ class MessageControllerIntegrationTest {
     }
 
     @Test
-    void pinMessage_withoutToken_returnsForbidden() throws Exception {
+    void pinMessage_withoutToken_returnsUnauthorized() throws Exception {
         Map<String, Long> body = Map.of("messageId", 1L);
 
         mockMvc.perform(patch("/chat-rooms/" + chatRoomId + "/pin")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

@@ -73,9 +73,9 @@ class FriendControllerIntegrationTest {
     }
 
     @Test
-    void sendFriendRequest_withoutToken_returnsForbidden() throws Exception {
+    void sendFriendRequest_withoutToken_returnsUnauthorized() throws Exception {
         mockMvc.perform(post("/friends/request/" + userBId))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

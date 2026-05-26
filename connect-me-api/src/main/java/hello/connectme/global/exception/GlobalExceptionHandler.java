@@ -2,6 +2,8 @@ package hello.connectme.global.exception;
 
 import hello.connectme.common.exception.BusinessException;
 import hello.connectme.global.response.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 비즈니스 규칙 위반 예외 처리
@@ -78,12 +82,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * 잘못된 Enum 변환 등 IllegalArgumentException 처리 — 400 반환
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error("INVALID_INPUT", e.getMessage()));
+    }
+
+    /**
      * 예상치 못한 예외 처리 — 500 Internal Server Error 반환
      * @param e 처리되지 않은 예외
      * @return 500 에러 응답
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleUnexpectedException(Exception e) {
+        log.error("Unexpected error: {}", e.getMessage(), e);
         return ResponseEntity.internalServerError()
                 .body(ApiResponse.error("SERVER_ERROR", "서버 오류가 발생했습니다."));
     }
