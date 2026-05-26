@@ -77,6 +77,7 @@ class ChatRoomServiceTest {
         ChatRoomMember targetMember = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
 
         given(userRepository.findById(2L)).willReturn(Optional.of(target));
+        given(chatRoomRepository.findExistingDirectRoom(1L, 2L)).willReturn(Optional.empty());
         given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(room);
         given(chatRoomMemberRepository.save(any(ChatRoomMember.class)))
                 .willReturn(ownerMember).willReturn(targetMember);
@@ -87,6 +88,24 @@ class ChatRoomServiceTest {
         assertThat(response.id()).isEqualTo(10L);
         assertThat(response.type()).isEqualTo(ChatRoomType.DIRECT.name());
         assertThat(response.memberCount()).isEqualTo(2);
+    }
+
+    @Test
+    void createDirectRoom_existingRoom_returnsExisting() {
+        User target = createTestUser(2L, "target@email.com");
+        ChatRoom existingRoom = createTestDirectRoom(10L);
+        ChatRoomMember ownerMember = createTestMember(1L, 10L, 1L, ChatRoomMemberRole.OWNER);
+        ChatRoomMember targetMember = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
+
+        given(userRepository.findById(2L)).willReturn(Optional.of(target));
+        given(chatRoomRepository.findExistingDirectRoom(1L, 2L)).willReturn(Optional.of(existingRoom));
+        given(chatRoomMemberRepository.findByChatRoomId(10L)).willReturn(List.of(ownerMember, targetMember));
+
+        ChatRoomResponse response = chatRoomService.createDirectRoom(1L, 2L);
+
+        assertThat(response.id()).isEqualTo(10L);
+        assertThat(response.memberCount()).isEqualTo(2);
+        then(chatRoomRepository).should(org.mockito.Mockito.never()).save(any(ChatRoom.class));
     }
 
     @Test
