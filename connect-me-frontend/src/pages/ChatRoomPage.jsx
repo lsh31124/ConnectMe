@@ -121,7 +121,11 @@ export default function ChatRoomPage() {
     if (!accessToken) return
     const client = new Client({
       brokerURL: 'ws://localhost:8080/ws',
-      connectHeaders: { Authorization: `Bearer ${accessToken}` },
+      beforeConnect: () => {
+        client.connectHeaders = {
+          Authorization: `Bearer ${useAuthStore.getState().accessToken}`,
+        }
+      },
       onConnect: () => {
         setConnected(true)
         client.subscribe(`/sub/chat/${roomId}`, (msg) => {

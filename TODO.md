@@ -153,13 +153,13 @@
 
 ## Phase 6. 인프라 / 운영
 
-- [ ] MySQL 로 DataSource 전환 (현재 H2 개발용)
+- [x] MySQL 로 DataSource 전환 (현재 H2 개발용)
 - [x] `application-prod.properties` 분리 (dev / prod 프로파일)
 - [x] Logback 설정 (`logback-spring.xml` — dev 콘솔 DEBUG / prod 파일 WARN, 일별 롤링 30일)
 - [x] 전역 예외 처리 `GlobalExceptionHandler` (`{"code":"CODE","message":"설명"}`)
 - [x] API 공통 응답 래퍼 `ApiResponse<T>`
 - [x] Swagger / SpringDoc OpenAPI 문서 자동화
-- [ ] Docker Compose (MySQL + Redis + 앱)
+- [x] Docker Compose (MySQL + Redis + 앱)
 - [ ] Redis — Refresh Token 저장소 및 채팅 세션 캐시
 - [x] 단위 테스트 (Service 레이어) — Auth / User / Friend / ChatRoom / Message
 - [x] 통합 테스트 (Controller 레이어) — Auth / User / Friend / ChatRoom / Message
@@ -184,5 +184,5 @@
 - [ ] GitHub Actions CD (main 머지 → 자동 배포)
 - [ ] Sentry Free tier 에러 추적 연동
 - [ ] 토스 미니앱 WebView 출시 준비 (TDS 컴포넌트, 토스 SDK 연동)
-<!-- Last Claude: 2026-05-22 20:39 -->
+<!-- Last Claude: 2026-05-26 18:37 -->
 /
