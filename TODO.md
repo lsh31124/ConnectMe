@@ -28,8 +28,18 @@
 
 ### FE-5. 채팅 화면
 - [x] 채팅방 목록 (`/chats` — ChatListPage, chatApi.js)
-- [ ] 채팅방 (WebSocket STOMP 실시간)
+- [x] 채팅방 (WebSocket STOMP 실시간)
 - [ ] 이미지 / 파일 첨부 전송
+
+### FE-6. 프론트엔드 테스트
+- [x] `apiFetch` 단위 테스트 (토큰 갱신 / 큐잉 / 로그아웃 시나리오)
+- [x] `authApi` 단위 테스트
+- [x] `useAuthStore` 단위 테스트
+- [x] `PrivateRoute` 컴포넌트 테스트
+- [x] `RegisterPage` 테스트
+- [x] `ProfilePage` 테스트
+- [x] `FriendListPage` 테스트
+- [x] `ChatListPage` 테스트
 
 ---
 
@@ -112,9 +122,9 @@
 - [x] WebSocket 인증 (JWT 핸드셰이크 인터셉터 — `JwtChannelInterceptor`)
 
 ### 4-3. 메시지 REST API
-- [ ] `GET /chat-rooms/{roomId}/messages` — 메시지 히스토리 (커서 페이징)
-- [ ] `DELETE /messages/{messageId}` — 메시지 삭제 (soft delete, `is_deleted=true`)
-- [ ] `PATCH /chat-rooms/{roomId}/pin` — 메시지 핀 고정 (`pinned_msg_id` 업데이트)
+- [x] `GET /chat-rooms/{roomId}/messages` — 메시지 히스토리 (커서 페이징)
+- [x] `DELETE /messages/{messageId}` — 메시지 삭제 (soft delete, `is_deleted=true`)
+- [x] `PATCH /chat-rooms/{roomId}/pin` — 메시지 핀 고정 (`pinned_msg_id` 업데이트)
 
 ### 4-4. 파일 첨부
 - [ ] `POST /upload` — 이미지 / 파일 업로드 (S3 또는 로컬 스토리지)
@@ -143,15 +153,16 @@
 
 ## Phase 6. 인프라 / 운영
 
-- [ ] MySQL 로 DataSource 전환 (현재 H2 개발용)
+- [x] MySQL 로 DataSource 전환 (현재 H2 개발용)
 - [x] `application-prod.properties` 분리 (dev / prod 프로파일)
 - [x] Logback 설정 (`logback-spring.xml` — dev 콘솔 DEBUG / prod 파일 WARN, 일별 롤링 30일)
 - [x] 전역 예외 처리 `GlobalExceptionHandler` (`{"code":"CODE","message":"설명"}`)
 - [x] API 공통 응답 래퍼 `ApiResponse<T>`
-- [ ] Swagger / SpringDoc OpenAPI 문서 자동화
-- [ ] Docker Compose (MySQL + Redis + 앱)
+- [x] Swagger / SpringDoc OpenAPI 문서 자동화
+- [x] Docker Compose (MySQL + Redis + 앱)
 - [ ] Redis — Refresh Token 저장소 및 채팅 세션 캐시
-- [ ] 단위 테스트 (Service 레이어) / 통합 테스트 (Repository 레이어)
+- [x] 단위 테스트 (Service 레이어) — Auth / User / Friend / ChatRoom / Message
+- [x] 통합 테스트 (Controller 레이어) — Auth / User / Friend / ChatRoom / Message
 
 ---
 
@@ -169,8 +180,9 @@
 ## 배포
 
 - [ ] Oracle Cloud Free tier 서버 세팅
-- [ ] GitHub Actions CI/CD (PR → 자동 테스트, main 머지 → 자동 배포)
+- [x] GitHub Actions CI (PR → 자동 테스트)
+- [ ] GitHub Actions CD (main 머지 → 자동 배포)
 - [ ] Sentry Free tier 에러 추적 연동
 - [ ] 토스 미니앱 WebView 출시 준비 (TDS 컴포넌트, 토스 SDK 연동)
-<!-- Last Claude: 2026-05-20 16:16 -->
+<!-- Last Claude: 2026-05-26 18:37 -->
 /

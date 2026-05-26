@@ -13,6 +13,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 채팅방 엔티티
+ * 1:1 다이렉트(DIRECT)와 그룹(GROUP) 두 가지 유형 지원
+ * 핀 메시지 및 이름 변경 기능 포함
+ */
 @Entity
 @Table(name = "chat_rooms")
 @Getter
@@ -36,6 +41,11 @@ public class ChatRoom extends BaseTimeEntity {
     @Column
     private Long pinnedMessageId;
 
+    /**
+     * 1:1 다이렉트 채팅방 생성 팩토리 메서드
+     * @param createdById 채팅방을 생성하는 회원 ID
+     * @return 생성된 ChatRoom 엔티티
+     */
     public static ChatRoom createDirect(Long createdById) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.type = ChatRoomType.DIRECT;
@@ -43,6 +53,12 @@ public class ChatRoom extends BaseTimeEntity {
         return chatRoom;
     }
 
+    /**
+     * 그룹 채팅방 생성 팩토리 메서드
+     * @param name 채팅방 이름
+     * @param createdById 채팅방을 생성하는 회원 ID
+     * @return 생성된 ChatRoom 엔티티
+     */
     public static ChatRoom createGroup(String name, Long createdById) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.name = name;
@@ -51,7 +67,15 @@ public class ChatRoom extends BaseTimeEntity {
         return chatRoom;
     }
 
+    /**
+     * 채팅방 이름 변경
+     * @param name 변경할 채팅방 이름
+     */
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void pinMessage(Long messageId) {
+        this.pinnedMessageId = messageId;
     }
 }

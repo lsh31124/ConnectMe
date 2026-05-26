@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './ProfilePage.module.css'
-import useAuthStore from '../store/useAuthStore'
 import { getMyProfile, updateMyProfile } from '../api/userApi'
 
 function BackIcon() {
@@ -44,7 +43,6 @@ function CameraIcon() {
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const accessToken = useAuthStore((s) => s.accessToken)
 
   const [profile, setProfile] = useState(null)
   const [editing, setEditing] = useState(false)
@@ -56,7 +54,7 @@ export default function ProfilePage() {
   const [successMsg, setSuccessMsg] = useState('')
 
   useEffect(() => {
-    getMyProfile(accessToken)
+    getMyProfile()
       .then((res) => {
         setProfile(res.data)
         setName(res.data.name)
@@ -64,7 +62,7 @@ export default function ProfilePage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [accessToken])
+  }, [])
 
   const handleEdit = () => {
     setName(profile.name)
@@ -84,7 +82,7 @@ export default function ProfilePage() {
     setSuccessMsg('')
     setSaving(true)
     try {
-      const res = await updateMyProfile({ name, statusMessage }, accessToken)
+      const res = await updateMyProfile({ name, statusMessage })
       setProfile(res.data)
       setEditing(false)
       setSuccessMsg('저장되었습니다.')

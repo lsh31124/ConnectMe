@@ -13,7 +13,7 @@ public record MessageResponse(
         String fileUrl,
         String fileName,
         Long fileSize,
-        boolean isDeleted,
+        boolean deleted,
         LocalDateTime createdAt
 ) {
     public static MessageResponse from(Message message) {
@@ -22,10 +22,10 @@ public record MessageResponse(
                 message.getChatRoomId(),
                 message.getSenderId(),
                 message.getType().name(),
-                message.getContent(),
-                message.getFileUrl(),
-                message.getFileName(),
-                message.getFileSize(),
+                message.isDeleted() ? null : message.getContent(),
+                message.isDeleted() ? null : message.getFileUrl(),
+                message.isDeleted() ? null : message.getFileName(),
+                message.isDeleted() ? null : message.getFileSize(),
                 message.isDeleted(),
                 message.getCreatedAt()
         );

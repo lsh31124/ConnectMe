@@ -9,7 +9,7 @@
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"/>
 
     <!-- Console Appender (dev only) -->
-    <springProfile name="dev,default">
+    <springProfile name="dev,default,local">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${LOG_PATTERN_CONSOLE}</pattern>

@@ -70,9 +70,9 @@ class GlobalExceptionHandlerIntegrationTest {
     }
 
     @Test
-    void withoutToken_returns403WithApiResponse() throws Exception {
+    void withoutToken_returns401WithApiResponse() throws Exception {
         mockMvc.perform(get("/users/me"))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.code").value("FORBIDDEN"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
     }
 }

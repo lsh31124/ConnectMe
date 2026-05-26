@@ -10,6 +10,7 @@ public record ChatRoomDetailResponse(
         String type,
         Long createdById,
         Long pinnedMessageId,
+        String profileImage,
         List<ChatRoomMemberResponse> members
 ) {
     public static ChatRoomDetailResponse from(ChatRoom room, List<ChatRoomMemberResponse> members) {
@@ -19,6 +20,20 @@ public record ChatRoomDetailResponse(
                 room.getType().name(),
                 room.getCreatedById(),
                 room.getPinnedMessageId(),
+                null,
+                members
+        );
+    }
+
+    public static ChatRoomDetailResponse from(ChatRoom room, List<ChatRoomMemberResponse> members,
+                                              String displayName, String profileImage) {
+        return new ChatRoomDetailResponse(
+                room.getId(),
+                displayName,
+                room.getType().name(),
+                room.getCreatedById(),
+                room.getPinnedMessageId(),
+                profileImage,
                 members
         );
     }

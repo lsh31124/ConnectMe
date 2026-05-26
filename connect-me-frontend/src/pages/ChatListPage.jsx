@@ -275,11 +275,11 @@ export default function ChatListPage() {
           <span className={styles.tabIconWrap}><FriendsTabIcon /></span>
           FRIENDS
         </Link>
-        <Link to="/home" className={styles.tabItem}>
+        <Link to="/chats" className={styles.tabItem}>
           <span className={styles.tabIconWrap}><HomeTabIcon /></span>
           HOME
         </Link>
-        <Link to="/more" className={styles.tabItem}>
+        <Link to="/settings" className={styles.tabItem}>
           <span className={styles.tabIconWrap}><MoreTabIcon /></span>
           MORE
         </Link>
