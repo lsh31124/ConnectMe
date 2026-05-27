@@ -53,7 +53,7 @@ describe('RegisterPage', () => {
     })
   })
 
-  it('회원가입 성공 시 /home으로 이동한다', async () => {
+  it('회원가입 성공 시 /login으로 이동한다', async () => {
     authApi.register.mockResolvedValue({ data: { accessToken: 'access', refreshToken: 'refresh' } })
 
     render(<MemoryRouter><RegisterPage /></MemoryRouter>)
@@ -64,7 +64,7 @@ describe('RegisterPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /create account/i }))
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/home')
+      expect(mockNavigate).toHaveBeenCalledWith('/login')
     })
   })
 
