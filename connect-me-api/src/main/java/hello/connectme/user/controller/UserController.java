@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class UserController {
     @PatchMapping("/me")
     public ResponseEntity<ApiResponse<UserProfileResponse>> updateMyProfile(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UpdateProfileRequest request) {
+            @RequestBody @Valid UpdateProfileRequest request) {
         Long userId = Long.parseLong(userDetails.getUsername());
         return ResponseEntity.ok(ApiResponse.ok(userService.updateProfile(userId, request)));
     }

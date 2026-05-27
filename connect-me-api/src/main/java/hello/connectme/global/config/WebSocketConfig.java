@@ -2,6 +2,7 @@ package hello.connectme.global.config;
 
 import hello.connectme.security.JwtChannelInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -20,6 +21,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtChannelInterceptor jwtChannelInterceptor;
 
+    @Value("${websocket.allowed-origins}")
+    private String[] allowedOrigins;
+
     /**
      * 메시지 브로커 설정
      * /sub: 구독(subscribe) 경로 접두사, /pub: 발행(publish) 경로 접두사
@@ -36,7 +40,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*");
+                .setAllowedOriginPatterns(allowedOrigins);
     }
 
     /**

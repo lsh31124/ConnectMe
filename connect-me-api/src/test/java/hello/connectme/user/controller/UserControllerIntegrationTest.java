@@ -60,16 +60,16 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void getMyProfile_withoutToken_returnsForbidden() throws Exception {
+    void getMyProfile_withoutToken_returnsUnauthorized() throws Exception {
         mockMvc.perform(get("/users/me"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void getMyProfile_invalidToken_returnsForbidden() throws Exception {
+    void getMyProfile_invalidToken_returnsUnauthorized() throws Exception {
         mockMvc.perform(get("/users/me")
                         .header("Authorization", "Bearer invalid.token.here"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -90,13 +90,13 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void updateMyProfile_withoutToken_returnsForbidden() throws Exception {
+    void updateMyProfile_withoutToken_returnsUnauthorized() throws Exception {
         Map<String, String> updateBody = Map.of("name", "새이름");
 
         mockMvc.perform(patch("/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateBody)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -126,9 +126,9 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void deleteMyAccount_withoutToken_returnsForbidden() throws Exception {
+    void deleteMyAccount_withoutToken_returnsUnauthorized() throws Exception {
         mockMvc.perform(delete("/users/me"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
 }

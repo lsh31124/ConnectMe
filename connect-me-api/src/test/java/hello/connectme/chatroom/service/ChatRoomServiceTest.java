@@ -91,6 +91,24 @@ class ChatRoomServiceTest {
     }
 
     @Test
+    void createDirectRoom_existingRoom_returnsExisting() {
+        User target = createTestUser(2L, "target@email.com");
+        ChatRoom existingRoom = createTestDirectRoom(10L);
+        ChatRoomMember ownerMember = createTestMember(1L, 10L, 1L, ChatRoomMemberRole.OWNER);
+        ChatRoomMember targetMember = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
+
+        given(userRepository.findById(2L)).willReturn(Optional.of(target));
+        given(chatRoomRepository.findByDirectRoomKey("1_2")).willReturn(Optional.of(existingRoom));
+        given(chatRoomMemberRepository.findByChatRoomId(10L)).willReturn(List.of(ownerMember, targetMember));
+
+        ChatRoomResponse response = chatRoomService.createDirectRoom(1L, 2L);
+
+        assertThat(response.id()).isEqualTo(10L);
+        assertThat(response.memberCount()).isEqualTo(2);
+        then(chatRoomRepository).should(org.mockito.Mockito.never()).save(any(ChatRoom.class));
+    }
+
+    @Test
     void createDirectRoom_targetUserNotFound_throwsException() {
         given(userRepository.findById(99L)).willReturn(Optional.empty());
 
