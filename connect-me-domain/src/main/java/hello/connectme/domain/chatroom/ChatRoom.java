@@ -41,15 +41,23 @@ public class ChatRoom extends BaseTimeEntity {
     @Column
     private Long pinnedMessageId;
 
+    @Column(unique = true, length = 30)
+    private String directRoomKey;
+
     /**
      * 1:1 다이렉트 채팅방 생성 팩토리 메서드
+     * directRoomKey = min(userId, otherUserId) + "_" + max(...) — UNIQUE 제약으로 중복 방 생성 방지
      * @param createdById 채팅방을 생성하는 회원 ID
+     * @param otherUserId 상대방 회원 ID
      * @return 생성된 ChatRoom 엔티티
      */
-    public static ChatRoom createDirect(Long createdById) {
+    public static ChatRoom createDirect(Long createdById, Long otherUserId) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.type = ChatRoomType.DIRECT;
         chatRoom.createdById = createdById;
+        long min = Math.min(createdById, otherUserId);
+        long max = Math.max(createdById, otherUserId);
+        chatRoom.directRoomKey = min + "_" + max;
         return chatRoom;
     }
 

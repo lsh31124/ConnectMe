@@ -140,7 +140,7 @@ public class FriendService {
         if (!friend.getRequesterId().equals(userId) && !friend.getReceiverId().equals(userId)) {
             throw new BusinessException(ErrorCode.FRIEND_INVALID_STATUS);
         }
-        friend.block();
+        friend.block(userId);
         return FriendStatusResponse.from(friend);
     }
 

@@ -49,7 +49,7 @@ class FriendServiceTest {
         if (status == FriendStatus.ACCEPTED) ReflectionTestUtils.setField(friend, "status", FriendStatus.ACCEPTED);
         if (status == FriendStatus.BLOCKED) {
             ReflectionTestUtils.setField(friend, "status", FriendStatus.ACCEPTED);
-            friend.block();
+            friend.block(requesterId);
         }
         return friend;
     }

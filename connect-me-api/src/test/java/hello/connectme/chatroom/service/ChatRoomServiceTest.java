@@ -46,7 +46,7 @@ class ChatRoomServiceTest {
     private UserRepository userRepository;
 
     private ChatRoom createTestDirectRoom(Long id) {
-        ChatRoom room = ChatRoom.createDirect(1L);
+        ChatRoom room = ChatRoom.createDirect(1L, 2L);
         ReflectionTestUtils.setField(room, "id", id);
         return room;
     }
@@ -77,6 +77,7 @@ class ChatRoomServiceTest {
         ChatRoomMember targetMember = createTestMember(2L, 10L, 2L, ChatRoomMemberRole.MEMBER);
 
         given(userRepository.findById(2L)).willReturn(Optional.of(target));
+        given(chatRoomRepository.findByDirectRoomKey("1_2")).willReturn(Optional.empty());
         given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(room);
         given(chatRoomMemberRepository.save(any(ChatRoomMember.class)))
                 .willReturn(ownerMember).willReturn(targetMember);

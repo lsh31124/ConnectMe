@@ -58,7 +58,7 @@ class MessageServiceTest {
     }
 
     private ChatRoom createTestChatRoom(Long id) {
-        ChatRoom chatRoom = ChatRoom.createDirect(1L);
+        ChatRoom chatRoom = ChatRoom.createDirect(1L, 2L);
         ReflectionTestUtils.setField(chatRoom, "id", id);
         return chatRoom;
     }

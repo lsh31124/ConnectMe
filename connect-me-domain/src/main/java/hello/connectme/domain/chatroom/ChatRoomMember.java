@@ -49,6 +49,9 @@ public class ChatRoomMember extends BaseTimeEntity {
     @Column
     private LocalDateTime leftAt;
 
+    @Column
+    private Long lastReadMessageId;
+
     /**
      * 채팅방 멤버 입장 팩토리 메서드 — 입장 시각 자동 설정
      * @param chatRoomId 입장할 채팅방 ID
@@ -71,5 +74,9 @@ public class ChatRoomMember extends BaseTimeEntity {
      */
     public void leave() {
         this.leftAt = LocalDateTime.now();
+    }
+
+    public void updateLastReadMessage(Long messageId) {
+        this.lastReadMessageId = messageId;
     }
 }
