@@ -30,9 +30,10 @@ class FriendTest {
         Friend friend = Friend.create(1L, 2L);
         friend.accept();
 
-        friend.block();
+        friend.block(1L);
 
         assertThat(friend.getStatus()).isEqualTo(FriendStatus.BLOCKED);
+        assertThat(friend.getBlockedById()).isEqualTo(1L);
     }
 
     @Test
@@ -48,7 +49,7 @@ class FriendTest {
     void block_whenNotAccepted_throwsException() {
         Friend friend = Friend.create(1L, 2L);
 
-        assertThatThrownBy(friend::block)
+        assertThatThrownBy(() -> friend.block(1L))
                 .isInstanceOf(IllegalStateException.class);
     }
 }

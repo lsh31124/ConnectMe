@@ -42,6 +42,9 @@ public class Friend extends BaseTimeEntity {
     @Column(nullable = false, length = 10)
     private FriendStatus status;
 
+    @Column(name = "blocked_by_id")
+    private Long blockedById;
+
     /**
      * 친구 요청 생성 팩토리 메서드 — 초기 상태는 PENDING
      * @param requesterId 친구 요청을 보내는 회원 ID
@@ -68,13 +71,13 @@ public class Friend extends BaseTimeEntity {
     }
 
     /**
-     * 친구 차단 — ACCEPTED 상태에서만 가능
+     * 친구 차단 — ACCEPTED 상태에서만 가능, 차단한 사용자를 blockedById에 기록
      */
-    public void block() {
-        // ACCEPTED 상태가 아니면 차단 불가
+    public void block(Long blockerId) {
         if (this.status != FriendStatus.ACCEPTED) {
             throw new IllegalStateException("ACCEPTED 상태에서만 차단할 수 있습니다.");
         }
         this.status = FriendStatus.BLOCKED;
+        this.blockedById = blockerId;
     }
 }
