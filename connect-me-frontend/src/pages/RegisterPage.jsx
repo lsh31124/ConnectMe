@@ -74,7 +74,7 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await registerAction({ name, email, password })
-      navigate('/home')
+      navigate('/login')
     } catch (err) {
       setError(err.message)
     } finally {

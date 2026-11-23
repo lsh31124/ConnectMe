@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 /**
  * 채팅방 비즈니스 로직 서비스
  * 채팅방 생성(1:1/그룹), 조회, 이름 수정, 멤버 초대/퇴장/강퇴 기능 제공
@@ -51,14 +54,14 @@ public class ChatRoomService {
         userRepository.findById(targetUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 이미 존재하는 1:1 채팅방이 있으면 기존 방 반환 (중복 생성 방지)
-        Optional<ChatRoom> existing = chatRoomRepository.findExistingDirectRoom(userId, targetUserId);
+        String directRoomKey = min(userId, targetUserId) + "_" + max(userId, targetUserId);
+        Optional<ChatRoom> existing = chatRoomRepository.findByDirectRoomKey(directRoomKey);
         if (existing.isPresent()) {
             List<ChatRoomMember> members = chatRoomMemberRepository.findByChatRoomId(existing.get().getId());
             return ChatRoomResponse.from(existing.get(), members);
         }
 
-        ChatRoom room = chatRoomRepository.save(ChatRoom.createDirect(userId));
+        ChatRoom room = chatRoomRepository.save(ChatRoom.createDirect(userId, targetUserId));
         chatRoomMemberRepository.save(ChatRoomMember.join(room.getId(), userId, ChatRoomMemberRole.OWNER));
         chatRoomMemberRepository.save(ChatRoomMember.join(room.getId(), targetUserId, ChatRoomMemberRole.MEMBER));
 
